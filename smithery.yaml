@@ -1,0 +1,25 @@
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required:
+      - apiKey
+    properties:
+      apiKey:
+        type: string
+        title: IonHour API Key
+        description: Your IonHour API key (starts with ionh_)
+      baseUrl:
+        type: string
+        title: API Base URL
+        description: IonHour API base URL (default: https://api.ionhour.com)
+  commandFunction:
+    |-
+    (config) => ({
+      command: 'npx',
+      args: ['@ionhour/mcp-server'],
+      env: {
+        IONHOUR_API_KEY: config.apiKey,
+        ...(config.baseUrl ? { IONHOUR_BASE_URL: config.baseUrl } : {})
+      }
+    })

@@ -1,0 +1,35 @@
+{
+  "name": "@ionhour/mcp-server",
+  "version": "0.1.7",
+  "description": "IonHour MCP Server -- connect AI assistants to your uptime monitoring workspace",
+  "license": "MIT",
+  "bin": {
+    "mcp-server": "./src/bin.js",
+    "ionhour-mcp": "./src/bin.js"
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ionhour",
+    "monitoring",
+    "uptime"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ionhour",
+    "directory": "libs/mcp-server"
+  },
+  "homepage": "https://ionhour.com",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0"
+  }
+}
