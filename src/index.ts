@@ -70,26 +70,41 @@ async function createRemoteClient(config: IonHourMcpConfig): Promise<Client> {
 }
 
 /**
+ * Get or create a lazily-initialized remote client.
+ * Connects on first use and caches the connection for subsequent calls.
+ */
+function createLazyClient(config: IonHourMcpConfig): () => Promise<Client> {
+  let client: Client | null = null;
+  let connecting: Promise<Client> | null = null;
+
+  return async () => {
+    if (client) return client;
+    if (connecting) return connecting;
+
+    connecting = createRemoteClient(config).then((c) => {
+      client = c;
+      connecting = null;
+      return c;
+    }).catch((error) => {
+      connecting = null;
+      throw error;
+    });
+
+    return connecting;
+  };
+}
+
+/**
  * Start the stdio-to-HTTP MCP proxy server.
  *
- * 1. Connects to the remote IonHour MCP endpoint as a client
- * 2. Exposes an MCP server over stdio
+ * 1. Exposes an MCP server over stdio immediately
+ * 2. Lazily connects to the remote IonHour MCP endpoint on first request
  * 3. Proxies all tool/resource/prompt requests to the remote endpoint
  */
 export async function startProxyServer(
   config: IonHourMcpConfig
 ): Promise<void> {
-  let remoteClient: Client;
-
-  try {
-    remoteClient = await createRemoteClient(config);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    process.stderr.write(
-      `Failed to connect to IonHour API at ${config.baseUrl}/api/mcp: ${message}\n`
-    );
-    process.exit(1);
-  }
+  const getClient = createLazyClient(config);
 
   const server = new Server(
     { name: 'ionhour', version: VERSION },
@@ -104,12 +119,14 @@ export async function startProxyServer(
 
   // Proxy tools/list
   server.setRequestHandler(ListToolsRequestSchema, async () => {
+    const remoteClient = await getClient();
     const result = await remoteClient.listTools();
     return { tools: result.tools };
   });
 
   // Proxy tools/call
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    const remoteClient = await getClient();
     const result = await remoteClient.callTool({
       name: request.params.name,
       arguments: request.params.arguments,
@@ -120,6 +137,7 @@ export async function startProxyServer(
   // Proxy resources/list
   server.setRequestHandler(ListResourcesRequestSchema, async () => {
     try {
+      const remoteClient = await getClient();
       const result = await remoteClient.listResources();
       return { resources: result.resources };
     } catch {
@@ -129,6 +147,7 @@ export async function startProxyServer(
 
   // Proxy resources/read
   server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    const remoteClient = await getClient();
     const result = await remoteClient.readResource({
       uri: request.params.uri,
     });
@@ -138,6 +157,7 @@ export async function startProxyServer(
   // Proxy prompts/list
   server.setRequestHandler(ListPromptsRequestSchema, async () => {
     try {
+      const remoteClient = await getClient();
       const result = await remoteClient.listPrompts();
       return { prompts: result.prompts };
     } catch {
@@ -147,6 +167,7 @@ export async function startProxyServer(
 
   // Proxy prompts/get
   server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+    const remoteClient = await getClient();
     const result = await remoteClient.getPrompt({
       name: request.params.name,
       arguments: request.params.arguments,
