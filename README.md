@@ -17,6 +17,14 @@ npx @ionhour/mcp-server
 
 ## Setup with AI Assistants
 
+### Smithery
+
+[![smithery badge](https://smithery.ai/badge/@ionhour/mcp-server)](https://smithery.ai/server/@ionhour/mcp-server)
+
+```bash
+npx -y @smithery/cli install @ionhour/mcp-server --client claude
+```
+
 ### Claude Code
 
 ```bash
@@ -66,6 +74,24 @@ Add to your `.vscode/mcp.json`:
 ```json
 {
   "servers": {
+    "ionhour": {
+      "command": "npx",
+      "args": ["@ionhour/mcp-server"],
+      "env": {
+        "IONHOUR_API_KEY": "ionh_your_key_here"
+      }
+    }
+  }
+}
+```
+
+### Windsurf
+
+Add to your `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
     "ionhour": {
       "command": "npx",
       "args": ["@ionhour/mcp-server"],
@@ -142,6 +168,7 @@ Commands:
 Options:
   --api-key KEY     IonHour API key (or set IONHOUR_API_KEY env var)
   --base-url URL    API base URL (default: https://api.ionhour.com)
+  --version, -v     Show version
   --help, -h        Show help
 ```
 
