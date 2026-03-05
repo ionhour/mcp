@@ -12,7 +12,7 @@ startCommand:
       baseUrl:
         type: string
         title: API Base URL
-        description: IonHour API base URL (default: https://api.ionhour.com)
+        description: IonHour MCP base URL (default: https://mcp.ionhour.com)
   commandFunction:
     |-
     (config) => ({

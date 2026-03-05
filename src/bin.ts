@@ -22,7 +22,7 @@ Commands:
 
 Server Options:
   --api-key KEY     IonHour API key (or set IONHOUR_API_KEY env var)
-  --base-url URL    IonHour API base URL (default: https://api.ionhour.com)
+  --base-url URL    IonHour MCP base URL (default: https://mcp.ionhour.com)
   --help, -h        Show this help message
 
 Setup with Claude Code:

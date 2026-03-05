@@ -44,7 +44,7 @@ export function resolveConfig(
       overrides?.baseUrl ||
       process.env['IONHOUR_BASE_URL'] ||
       creds?.baseUrl ||
-      'https://api.ionhour.com',
+      'https://mcp.ionhour.com',
   };
 }
 

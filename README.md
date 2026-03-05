@@ -167,7 +167,7 @@ Commands:
 
 Options:
   --api-key KEY     IonHour API key (or set IONHOUR_API_KEY env var)
-  --base-url URL    API base URL (default: https://api.ionhour.com)
+  --base-url URL    MCP base URL (default: https://mcp.ionhour.com)
   --version, -v     Show version
   --help, -h        Show help
 ```

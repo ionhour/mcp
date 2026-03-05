@@ -42,7 +42,7 @@ function getDefaults(): LoginOptions {
     authUrl: process.env['IONHOUR_AUTH_URL'] || 'https://kc.ionhour.com',
     realm: process.env['IONHOUR_REALM'] || 'ionhour-production',
     clientId: process.env['IONHOUR_CLI_CLIENT_ID'] || 'ionhour-cli',
-    baseUrl: process.env['IONHOUR_BASE_URL'] || 'https://api.ionhour.com',
+    baseUrl: process.env['IONHOUR_BASE_URL'] || 'https://mcp.ionhour.com',
   };
 }
 
