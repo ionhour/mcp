@@ -53,7 +53,7 @@ export function resolveConfig(
  */
 async function createRemoteClient(config: IonHourMcpConfig): Promise<Client> {
   const transport = new StreamableHTTPClientTransport(
-    new URL(`${config.baseUrl}/api/mcp`),
+    new URL(config.baseUrl),
     {
       requestInit: {
         headers: {

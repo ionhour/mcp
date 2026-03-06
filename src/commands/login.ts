@@ -35,6 +35,7 @@ interface LoginOptions {
   realm: string;
   clientId: string;
   baseUrl: string;
+  apiUrl: string;
 }
 
 function getDefaults(): LoginOptions {
@@ -43,6 +44,7 @@ function getDefaults(): LoginOptions {
     realm: process.env['IONHOUR_REALM'] || 'ionhour-production',
     clientId: process.env['IONHOUR_CLI_CLIENT_ID'] || 'ionhour-cli',
     baseUrl: process.env['IONHOUR_BASE_URL'] || 'https://mcp.ionhour.com',
+    apiUrl: process.env['IONHOUR_API_URL'] || 'https://api.ionhour.com',
   };
 }
 
@@ -215,7 +217,7 @@ export async function loginCommand(): Promise<void> {
   process.stderr.write('Authenticated successfully!\n\n');
 
   // Step 4: Fetch workspaces
-  const workspaces = await fetchWorkspaces(opts.baseUrl, token.access_token);
+  const workspaces = await fetchWorkspaces(opts.apiUrl, token.access_token);
 
   if (workspaces.length === 0) {
     throw new Error(
@@ -255,7 +257,7 @@ export async function loginCommand(): Promise<void> {
   process.stderr.write(`Creating API key "${keyName}"...\n`);
 
   const { key } = await createApiKey(
-    opts.baseUrl,
+    opts.apiUrl,
     token.access_token,
     selectedWorkspace.id,
     keyName
