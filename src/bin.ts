@@ -5,6 +5,7 @@ import { VERSION } from './version.js';
 import { loginCommand } from './commands/login.js';
 import { logoutCommand } from './commands/logout.js';
 import { whoamiCommand } from './commands/whoami.js';
+import { setupCommand } from './commands/setup.js';
 
 const HELP_TEXT = `
 IonHour MCP Server v${VERSION}
@@ -16,6 +17,7 @@ Usage:
 
 Commands:
   (default)     Start the MCP server (stdio proxy mode)
+  setup         Interactive setup wizard — install MCP server in your editors
   login         Authenticate and store API key
   logout        Remove stored credentials
   whoami        Show current authentication status
@@ -48,7 +50,7 @@ function parseArgs(): {
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
 
-    if (arg === 'login' || arg === 'logout' || arg === 'whoami') {
+    if (arg === 'login' || arg === 'logout' || arg === 'whoami' || arg === 'setup') {
       result.command = arg;
     } else if (arg === '--api-key' && args[i + 1]) {
       result.apiKey = args[++i];
@@ -70,6 +72,10 @@ async function main(): Promise<void> {
   const { command, ...serverOpts } = parseArgs();
 
   switch (command) {
+    case 'setup':
+      await setupCommand();
+      break;
+
     case 'login':
       await loginCommand();
       break;

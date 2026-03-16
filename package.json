@@ -29,6 +29,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@clack/prompts": "^0.10.1",
     "@modelcontextprotocol/sdk": "^1.26.0"
   }
 }
