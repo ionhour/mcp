@@ -264,6 +264,17 @@ const EDITORS: Record<string, EditorConfig> = {
       p.log.info(`  Written to ${configPath}`);
     },
   },
+
+  codex: {
+    detect: () => commandExists('codex'),
+    install: () => {
+      // Codex uses ~/.codex/config.toml with [mcp_servers.name] sections
+      // but also supports a JSON config at ~/.codex/mcp.json
+      const configPath = join(home, '.codex', 'mcp.json');
+      mergeServerConfig(configPath, 'mcpServers', 'ionhour', stdioServerEntry());
+      p.log.info(`  Written to ${configPath}`);
+    },
+  },
 };
 
 // ─── Main setup command ───
@@ -307,6 +318,7 @@ export async function setupCommand(): Promise<void> {
       vscode: 'Visual Studio Code',
       zed: 'Zed',
       windsurf: 'Windsurf',
+      codex: 'Codex',
     };
 
     options.push({
