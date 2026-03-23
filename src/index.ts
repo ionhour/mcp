@@ -13,7 +13,7 @@ import {
 import { VERSION } from './version.js';
 import { loadCredentials } from './credentials.js';
 
-export interface IonHourMcpConfig {
+export interface IonhourMcpConfig {
   apiKey: string;
   baseUrl: string;
 }
@@ -24,15 +24,15 @@ export interface IonHourMcpConfig {
  * Throws if no API key is available from any source.
  */
 export function resolveConfig(
-  overrides?: Partial<IonHourMcpConfig>
-): IonHourMcpConfig {
+  overrides?: Partial<IonhourMcpConfig>
+): IonhourMcpConfig {
   const creds = loadCredentials();
 
   const apiKey =
     overrides?.apiKey || process.env['IONHOUR_API_KEY'] || creds?.apiKey;
   if (!apiKey) {
     throw new Error(
-      'IonHour API key is required.\n' +
+      'Ionhour API key is required.\n' +
         '  Run: npx @ionhour/mcp-server login\n' +
         '  Or set IONHOUR_API_KEY environment variable\n' +
         '  Or pass --api-key flag'
@@ -49,19 +49,16 @@ export function resolveConfig(
 }
 
 /**
- * Create an MCP Client connected to the remote IonHour API endpoint.
+ * Create an MCP Client connected to the remote Ionhour API endpoint.
  */
-async function createRemoteClient(config: IonHourMcpConfig): Promise<Client> {
-  const transport = new StreamableHTTPClientTransport(
-    new URL(config.baseUrl),
-    {
-      requestInit: {
-        headers: {
-          Authorization: `Bearer ${config.apiKey}`,
-        },
+async function createRemoteClient(config: IonhourMcpConfig): Promise<Client> {
+  const transport = new StreamableHTTPClientTransport(new URL(config.baseUrl), {
+    requestInit: {
+      headers: {
+        Authorization: `Bearer ${config.apiKey}`,
       },
-    }
-  );
+    },
+  });
 
   const client = new Client({ name: 'ionhour-mcp-proxy', version: VERSION });
 
@@ -73,7 +70,7 @@ async function createRemoteClient(config: IonHourMcpConfig): Promise<Client> {
  * Get or create a lazily-initialized remote client.
  * Connects on first use and caches the connection for subsequent calls.
  */
-function createLazyClient(config: IonHourMcpConfig): () => Promise<Client> {
+function createLazyClient(config: IonhourMcpConfig): () => Promise<Client> {
   let client: Client | null = null;
   let connecting: Promise<Client> | null = null;
 
@@ -81,14 +78,16 @@ function createLazyClient(config: IonHourMcpConfig): () => Promise<Client> {
     if (client) return client;
     if (connecting) return connecting;
 
-    connecting = createRemoteClient(config).then((c) => {
-      client = c;
-      connecting = null;
-      return c;
-    }).catch((error) => {
-      connecting = null;
-      throw error;
-    });
+    connecting = createRemoteClient(config)
+      .then((c) => {
+        client = c;
+        connecting = null;
+        return c;
+      })
+      .catch((error) => {
+        connecting = null;
+        throw error;
+      });
 
     return connecting;
   };
@@ -98,11 +97,11 @@ function createLazyClient(config: IonHourMcpConfig): () => Promise<Client> {
  * Start the stdio-to-HTTP MCP proxy server.
  *
  * 1. Exposes an MCP server over stdio immediately
- * 2. Lazily connects to the remote IonHour MCP endpoint on first request
+ * 2. Lazily connects to the remote Ionhour MCP endpoint on first request
  * 3. Proxies all tool/resource/prompt requests to the remote endpoint
  */
 export async function startProxyServer(
-  config: IonHourMcpConfig
+  config: IonhourMcpConfig
 ): Promise<void> {
   const getClient = createLazyClient(config);
 
@@ -180,5 +179,5 @@ export async function startProxyServer(
   await server.connect(transport);
 
   // Log to stderr so stdout remains clean for MCP JSON-RPC protocol
-  process.stderr.write('IonHour MCP server started (stdio proxy mode)\n');
+  process.stderr.write('Ionhour MCP server started (stdio proxy mode)\n');
 }

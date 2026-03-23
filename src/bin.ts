@@ -8,9 +8,9 @@ import { whoamiCommand } from './commands/whoami.js';
 import { setupCommand } from './commands/setup.js';
 
 const HELP_TEXT = `
-IonHour MCP Server v${VERSION}
+Ionhour MCP Server v${VERSION}
 
-Connect AI assistants to your IonHour monitoring workspace.
+Connect AI assistants to your Ionhour monitoring workspace.
 
 Usage:
   npx @ionhour/mcp-server [command] [options]
@@ -23,8 +23,8 @@ Commands:
   whoami        Show current authentication status
 
 Server Options:
-  --api-key KEY     IonHour API key (or set IONHOUR_API_KEY env var)
-  --base-url URL    IonHour MCP base URL (default: https://mcp.ionhour.com)
+  --api-key KEY     Ionhour API key (or set IONHOUR_API_KEY env var)
+  --base-url URL    Ionhour MCP base URL (default: https://mcp.ionhour.com)
   --help, -h        Show this help message
 
 Setup with Claude Code:
@@ -50,7 +50,12 @@ function parseArgs(): {
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
 
-    if (arg === 'login' || arg === 'logout' || arg === 'whoami' || arg === 'setup') {
+    if (
+      arg === 'login' ||
+      arg === 'logout' ||
+      arg === 'whoami' ||
+      arg === 'setup'
+    ) {
       result.command = arg;
     } else if (arg === '--api-key' && args[i + 1]) {
       result.apiKey = args[++i];
