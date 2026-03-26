@@ -1,6 +1,6 @@
 {
   "name": "@ionhour/mcp-server",
-  "version": "0.1.16",
+  "version": "0.1.15",
   "description": "Ionhour MCP Server -- connect AI assistants to your uptime monitoring workspace",
   "license": "MIT",
   "bin": {
