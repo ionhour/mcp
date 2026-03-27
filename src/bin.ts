@@ -8,9 +8,9 @@ import { whoamiCommand } from './commands/whoami.js';
 import { setupCommand } from './commands/setup.js';
 
 const HELP_TEXT = `
-Ion — IonHour AI Operator v${VERSION}
+Ionhour MCP Server v${VERSION}
 
-Connect Ion, your AI operator, to your IonHour monitoring workspace.
+Connect AI assistants to your Ionhour monitoring workspace.
 
 Usage:
   npx @ionhour/mcp-server [command] [options]

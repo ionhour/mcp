@@ -106,7 +106,7 @@ export async function startProxyServer(
   const getClient = createLazyClient(config);
 
   const server = new Server(
-    { name: 'ion', version: VERSION },
+    { name: 'ionhour', version: VERSION },
     {
       capabilities: {
         tools: {},
@@ -179,5 +179,5 @@ export async function startProxyServer(
   await server.connect(transport);
 
   // Log to stderr so stdout remains clean for MCP JSON-RPC protocol
-  process.stderr.write('Ion operator started (stdio proxy mode)\n');
+  process.stderr.write('Ionhour MCP server started (stdio proxy mode)\n');
 }
