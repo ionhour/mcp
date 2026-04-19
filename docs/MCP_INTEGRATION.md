@@ -483,14 +483,13 @@ Create an email or webhook notification channel. Slack requires OAuth setup in t
 - `enabled` (optional, default: true)
 - `to` (optional): Email recipients array (required for email type)
 - `webhookUrl` (optional): Webhook URL (required for webhook type)
-- `severityFilter` (optional): Array of `CRITICAL` and/or `WARNING`. Omit for all severities.
 
 #### `update_alert_channel`
-Update channel name, enabled state, or severity filter.
+Update channel name or enabled state.
 
 **Parameters:**
 - `channelId` (required): Alert channel ID
-- `name`, `enabled`, `severityFilter` (all optional)
+- `name`, `enabled` (all optional)
 
 #### `delete_alert_channel`
 Delete a notification channel. **Cannot be undone.**
