@@ -195,7 +195,8 @@ Pre-built workflow templates that guide AI assistants through multi-step operati
 npx @ionhour/mcp-server [command] [options]
 
 Commands:
-  (default)     Start the MCP server
+  (default)     Start the MCP server (stdio proxy mode)
+  setup         Interactive wizard — install MCP server into your editors
   login         Authenticate via browser and store API key
   logout        Remove stored credentials
   whoami        Show current authentication status
@@ -205,6 +206,20 @@ Options:
   --base-url URL    MCP base URL (default: https://mcp.ionhour.com)
   --version, -v     Show version
   --help, -h        Show help
+
+Environment Variables:
+  IONHOUR_API_KEY   API key for authentication
+  IONHOUR_BASE_URL  Base URL override
+  IONHOUR_AUTH_URL  Keycloak auth server URL (for login)
+  IONHOUR_REALM     Keycloak realm name (for login)
+```
+
+### `setup`
+
+Interactive wizard that detects installed editors (Cursor, Claude Desktop, VS Code, Claude Code, Windsurf) and writes the IonHour MCP server configuration into each one. Prompts for login if no credentials are stored:
+
+```bash
+npx @ionhour/mcp-server setup
 ```
 
 ### `login`
@@ -217,6 +232,22 @@ npx @ionhour/mcp-server login
 
 Credentials are stored at `~/.config/ionhour/credentials.json` (file permissions: 600).
 After login, you can run the MCP server without setting `IONHOUR_API_KEY`.
+
+### `logout`
+
+Removes stored credentials from `~/.config/ionhour/credentials.json`:
+
+```bash
+npx @ionhour/mcp-server logout
+```
+
+### `whoami`
+
+Shows the current authentication status — the workspace, user, and permission level associated with the stored API key:
+
+```bash
+npx @ionhour/mcp-server whoami
+```
 
 ## How It Works
 
