@@ -38,13 +38,13 @@ Use the diagnose_incident prompt for incident 42
 - `serviceName` (required): Name of the service to monitor
 
 **What it does:**
-1. Lists existing projects to avoid duplicates
-2. Creates a new project if needed
-3. Asks what checks are needed (interval, endpoints)
-4. Registers checks with `register_check`
+1. Asks which monitor type is needed: an inbound heartbeat (Job) or an outbound HTTP probe (Check)
+2. Lists existing projects to avoid duplicates
+3. Creates a new project if needed
+4. Creates the monitor(s): `register_job` for heartbeats, `create_check` for outbound probes
 5. Verifies alert channels exist, creates them if missing
-6. Sets up escalation rules to connect the project to alert channels
-7. Provides a summary with ping URLs and integration instructions
+6. Attaches an alert channel to the project escalation policy with `add_escalation_step`
+7. Provides a summary with Job ping URLs / Check IDs and integration instructions
 
 **Example usage:**
 ```
@@ -289,7 +289,7 @@ When creating checks, use natural language:
 
 ```
 "Create a check that runs every 15 minutes"
-→ AI passes interval="every 15 minutes" to register_check
+→ AI passes interval="every 15 minutes" to create_check (or register_job for a heartbeat)
 → Server parses to 900 seconds
 ```
 
@@ -303,9 +303,10 @@ AI assistants should always confirm before:
 ### 6. Post-Action Verification
 
 After write operations, verify the result:
-- After `register_check` → provide the ping URL and suggest a test heartbeat
-- After `create_deployment` → confirm checks are paused
-- After `end_deployment` → verify checks return to OK
+- After `register_job` → provide the ping URL and suggest a test heartbeat
+- After `create_check` → run `run_check_probe` to confirm the probe works
+- After `create_deployment` → confirm monitors are paused
+- After `end_deployment` → verify monitors return to OK
 - After `resolve_incident` → check that no new incidents appeared
 
 ## Prompt Priority

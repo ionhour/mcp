@@ -23,7 +23,15 @@ The server-side MCP API is hosted at `https://mcp.ionhour.com`. This package is 
 - `dependency_health_audit` — Audit all dependencies and assess health impact on checks
 
 #### Human-Readable Schedule Input
-- `register_check` now accepts an `interval` string field (e.g., "every 5 minutes", "hourly", "every 30 min") as an alternative to `intervalSeconds`
+- `register_job` and `create_check` accept an `interval` string field (e.g., "every 5 minutes", "hourly", "every 30 min") as an alternative to `intervalSeconds`
+
+### Changed
+
+- **Guide & prompt refresh** — the workflow guides and the `setup_monitoring`, `diagnose_incident`, `deployment_checklist`, and `weekly_reliability_report` prompts now distinguish inbound heartbeat monitors (Jobs) from outbound HTTP probes (Checks), branching on monitor type and iterating both check and job tools where relevant.
+
+### Deprecated
+
+- **`register_check` is now a tombstone (behavior change).** It no longer creates anything — calling it returns a structured error. It previously created a **Job** (inbound heartbeat monitor), which caused confusion. Migrate to `register_job` for heartbeat monitors or `create_check` for outbound HTTP probes.
 
 ## [0.1.10] - 2025-05-28
 

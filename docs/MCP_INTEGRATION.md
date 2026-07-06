@@ -220,17 +220,28 @@ Update a project's name or environment.
 - `name` (optional): New name
 - `environment` (optional): `prod` or `staging`
 
-### Checks (Monitors)
+### Checks (Outbound HTTP Probes)
 
-#### `register_check`
-Create a monitoring check. Returns a token for sending heartbeats.
+IonHour probes a URL you own on a schedule and alerts on failure.
+
+#### `register_check` (deprecated — tombstoned)
+
+`register_check` is a deprecated alias that no longer creates anything. Calling it returns a structured error and creates no monitor. It historically created a **Job** (inbound heartbeat monitor), not a check, which was a common point of confusion.
+
+**Migrate to:**
+- `register_job` — if you want an inbound heartbeat monitor (your cron/worker pings IonHour). This is what `register_check` used to create.
+- `create_check` — if you want an outbound HTTP probe (IonHour probes your URL). See below.
+
+#### `create_check`
+Create an outbound check (HTTP probe): IonHour probes the given URL on a schedule and alerts on failure.
 
 **Parameters:**
 - `name` (required): Check name
-- `projectId` (required): Project ID
-- `intervalSeconds` (optional, 300-3600): Interval in seconds. Ignored if `interval` is provided.
+- `url` (required): Target URL to probe (http/https)
+- `projectId` or `dependencyId` (required, exactly one)
+- `intervalSeconds` (optional, 10-3600): Interval in seconds. Ignored if `interval` is provided.
 - `interval` (optional): Human-readable interval (e.g., "every 5 minutes", "every hour", "hourly"). Takes priority over `intervalSeconds`.
-- `graceSeconds` (optional, 5-60, default: 20): Grace period before LATE status
+- `graceSeconds` (optional, 5-60): Grace period before LATE status
 
 **Human-readable intervals:**
 
@@ -244,8 +255,8 @@ Create a monitoring check. Returns a token for sending heartbeats.
 | `every N minutes` | N * 60 |
 
 **Example prompts:**
-- "Create a check called 'api-health' in project 1 that runs every 5 minutes"
-- "Register a new hourly check for the payment service"
+- "Create a check called 'api-health' in project 1 that probes https://api.example.com/health every 5 minutes"
+- "Add an hourly outbound check for the payment service status URL"
 
 #### `list_checks`
 List checks in workspace, optionally filtered by project.

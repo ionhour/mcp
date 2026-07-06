@@ -122,22 +122,39 @@ Add to your `~/.codeium/windsurf/mcp_config.json`:
 ### Projects
 - `list_projects` / `create_project` / `update_project`
 
-### Checks (Monitors)
-- `register_check` - Create a monitoring check (accepts human-readable intervals like "every 5 minutes" or "hourly")
+### Checks (Outbound HTTP Probes)
+
+IonHour probes a URL you own on a schedule and alerts on failure.
+
+- `create_check` - Create an outbound check (accepts human-readable intervals like "every 5 minutes" or "hourly")
 - `list_checks` / `list_checks_by_status` / `find_check_by_name`
-- `get_check_status` - Detailed status with recent signals
+- `get_check_status` - Detailed status with recent probe results
 - `get_check_uptime` - Uptime percentage with daily buckets
+- `run_check_probe` - Probe the check on demand
 - `pause_check` / `resume_check`
 - `delete_check` - Permanently delete a check and its data
 
-### Signals (Heartbeats)
+> `register_check` is a deprecated tombstone: it creates nothing. Use `register_job` for a heartbeat monitor or `create_check` for an outbound probe.
+
+### Jobs (Inbound Heartbeat Monitors)
+
+Your cron/worker pings IonHour; IonHour alerts if a ping is late or missing.
+
+- `register_job` - Create a Job and get its heartbeat token (accepts human-readable intervals)
+- `list_jobs` / `find_job_by_name`
+- `get_job_status` - Detailed status with recent heartbeats
+- `get_job_uptime` - Uptime percentage with daily buckets
+- `pause_job` / `resume_job`
+- `delete_job` - Delete a job and its data
+
+### Signals (Heartbeat Pings)
 - `send_heartbeat` - Send a success signal
 - `send_failure_signal` - Report a failure
 - `list_signals` - View signal history
 
 ### Incidents
 - `list_incidents` / `search_incidents` / `get_incident`
-- `get_incident_timeline` - Incident history for a check
+- `get_incident_timeline` - Incident history for a check or job
 - `create_incident` / `acknowledge_incident` / `resolve_incident`
 - `add_incident_note`
 
