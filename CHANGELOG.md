@@ -22,6 +22,16 @@ The server-side MCP API is hosted at `https://mcp.ionhour.com`. This package is 
 - `status_page_incident` — Guided workflow to communicate incidents through status pages
 - `dependency_health_audit` — Audit all dependencies and assess health impact on checks
 
+#### Incident Lifecycle Tools (3 new tools)
+- `update_incident` — Edit an incident's title and/or summary (summary is rich text, sanitized server-side)
+- `reopen_incident` — Reopen a resolved incident, moving it back to active
+- `set_incident_severity` — Change an incident's severity (P1–P4)
+
+#### Incident Communications Tools (3 new tools)
+- `publish_incident_to_status_page` — Publish an incident to a status page as a public, incident-linked announcement (idempotent — returns the existing announcement if already published)
+- `create_incident_update` — Post a stakeholder update to an incident (internal record; does not publish to a status page on its own)
+- `publish_incident_update` — Publish an existing stakeholder update to the workspace status page
+
 #### Human-Readable Schedule Input
 - `register_job` and `create_check` accept an `interval` string field (e.g., "every 5 minutes", "hourly", "every 30 min") as an alternative to `intervalSeconds`
 
