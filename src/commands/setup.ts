@@ -1,9 +1,4 @@
-import {
-  readFileSync,
-  writeFileSync,
-  mkdirSync,
-  existsSync,
-} from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { homedir, platform } from 'node:os';
 import { join } from 'node:path';
 import { execSync } from 'node:child_process';
@@ -55,7 +50,7 @@ function mergeServerConfig(
   filePath: string,
   serversKey: string,
   serverName: string,
-  entry: Record<string, unknown>
+  entry: Record<string, unknown>,
 ): void {
   const config = readJsonFile(filePath);
   const servers = (config[serversKey] as Record<string, unknown>) || {};
@@ -76,21 +71,21 @@ function claudeDesktopConfigPath(): string {
       'Library',
       'Application Support',
       'Claude',
-      'claude_desktop_config.json'
+      'claude_desktop_config.json',
     );
   }
   if (os === 'win32') {
     return join(
       process.env['APPDATA'] || join(home, 'AppData', 'Roaming'),
       'Claude',
-      'claude_desktop_config.json'
+      'claude_desktop_config.json',
     );
   }
   // Linux
   return join(
     process.env['XDG_CONFIG_HOME'] || join(home, '.config'),
     'Claude',
-    'claude_desktop_config.json'
+    'claude_desktop_config.json',
   );
 }
 
@@ -108,7 +103,12 @@ const EDITORS: Record<string, EditorConfig> = {
     detect: () => existsSync(join(home, '.cursor')),
     install: () => {
       const configPath = join(home, '.cursor', 'mcp.json');
-      mergeServerConfig(configPath, 'mcpServers', 'ionhour', stdioServerEntry());
+      mergeServerConfig(
+        configPath,
+        'mcpServers',
+        'ionhour',
+        stdioServerEntry(),
+      );
       p.log.info(`  Written to ${configPath}`);
     },
   },
@@ -117,15 +117,15 @@ const EDITORS: Record<string, EditorConfig> = {
     detect: () => {
       if (os === 'darwin') {
         return existsSync(
-          join(home, 'Library', 'Application Support', 'Claude')
+          join(home, 'Library', 'Application Support', 'Claude'),
         );
       }
       if (os === 'win32') {
         return existsSync(
           join(
             process.env['APPDATA'] || join(home, 'AppData', 'Roaming'),
-            'Claude'
-          )
+            'Claude',
+          ),
         );
       }
       return false;
@@ -136,7 +136,7 @@ const EDITORS: Record<string, EditorConfig> = {
         configPath,
         'mcpServers',
         'ionhour',
-        stdioServerEntry()
+        stdioServerEntry(),
       );
       p.log.info(`  Written to ${configPath}`);
     },
@@ -146,16 +146,18 @@ const EDITORS: Record<string, EditorConfig> = {
     detect: () => commandExists('claude'),
     install: (apiKey: string) => {
       try {
-        execSync(
-          `claude mcp add ionhour -- npx -y @ionhour/mcp-server`,
-          { stdio: 'ignore' }
+        execSync(`claude mcp add ionhour -- npx -y @ionhour/mcp-server`, {
+          stdio: 'ignore',
+        });
+        p.log.info(
+          `  Ran: claude mcp add ionhour -- npx -y @ionhour/mcp-server`,
         );
-        p.log.info(`  Ran: claude mcp add ionhour -- npx -y @ionhour/mcp-server`);
       } catch {
         // Fallback: write to ~/.claude.json
         const configPath = join(home, '.claude.json');
         const config = readJsonFile(configPath);
-        const mcpServers = (config['mcpServers'] as Record<string, unknown>) || {};
+        const mcpServers =
+          (config['mcpServers'] as Record<string, unknown>) || {};
         mcpServers['ionhour'] = {
           command: 'npx',
           args: ['-y', '@ionhour/mcp-server'],
@@ -170,16 +172,14 @@ const EDITORS: Record<string, EditorConfig> = {
   vscode: {
     detect: () => {
       if (os === 'darwin') {
-        return existsSync(
-          join(home, 'Library', 'Application Support', 'Code')
-        );
+        return existsSync(join(home, 'Library', 'Application Support', 'Code'));
       }
       if (os === 'win32') {
         return existsSync(
           join(
             process.env['APPDATA'] || join(home, 'AppData', 'Roaming'),
-            'Code'
-          )
+            'Code',
+          ),
         );
       }
       return (
@@ -197,19 +197,19 @@ const EDITORS: Record<string, EditorConfig> = {
           'Library',
           'Application Support',
           'Code',
-          'User'
+          'User',
         );
       } else if (os === 'win32') {
         settingsDir = join(
           process.env['APPDATA'] || join(home, 'AppData', 'Roaming'),
           'Code',
-          'User'
+          'User',
         );
       } else {
         settingsDir = join(
           process.env['XDG_CONFIG_HOME'] || join(home, '.config'),
           'Code',
-          'User'
+          'User',
         );
       }
 
@@ -217,8 +217,7 @@ const EDITORS: Record<string, EditorConfig> = {
       const config = readJsonFile(settingsPath);
 
       const mcpServers = (config['mcp'] as Record<string, unknown>) || {};
-      const servers =
-        (mcpServers['servers'] as Record<string, unknown>) || {};
+      const servers = (mcpServers['servers'] as Record<string, unknown>) || {};
       servers['ionhour'] = {
         type: 'stdio',
         command: 'npx',
@@ -256,11 +255,15 @@ const EDITORS: Record<string, EditorConfig> = {
 
   windsurf: {
     detect: () =>
-      existsSync(join(home, '.codeium')) ||
-      existsSync(join(home, '.windsurf')),
+      existsSync(join(home, '.codeium')) || existsSync(join(home, '.windsurf')),
     install: () => {
       const configPath = join(home, '.codeium', 'windsurf', 'mcp_config.json');
-      mergeServerConfig(configPath, 'mcpServers', 'ionhour', stdioServerEntry());
+      mergeServerConfig(
+        configPath,
+        'mcpServers',
+        'ionhour',
+        stdioServerEntry(),
+      );
       p.log.info(`  Written to ${configPath}`);
     },
   },
@@ -271,7 +274,12 @@ const EDITORS: Record<string, EditorConfig> = {
       // Codex uses ~/.codex/config.toml with [mcp_servers.name] sections
       // but also supports a JSON config at ~/.codex/mcp.json
       const configPath = join(home, '.codex', 'mcp.json');
-      mergeServerConfig(configPath, 'mcpServers', 'ionhour', stdioServerEntry());
+      mergeServerConfig(
+        configPath,
+        'mcpServers',
+        'ionhour',
+        stdioServerEntry(),
+      );
       p.log.info(`  Written to ${configPath}`);
     },
   },
@@ -280,7 +288,7 @@ const EDITORS: Record<string, EditorConfig> = {
 // ─── Main setup command ───
 
 export async function setupCommand(): Promise<void> {
-  p.intro(`IonHour MCP Setup v${VERSION}`);
+  p.intro(`Ionhour MCP Setup v${VERSION}`);
 
   // Step 1: Ensure credentials exist
   let creds = loadCredentials();
@@ -367,15 +375,13 @@ export async function setupCommand(): Promise<void> {
   const failed = results.filter((r) => !r.success);
 
   if (succeeded.length > 0) {
-    p.log.success(
-      `Installed in: ${succeeded.map((r) => r.editor).join(', ')}`
-    );
+    p.log.success(`Installed in: ${succeeded.map((r) => r.editor).join(', ')}`);
   }
   if (failed.length > 0) {
     p.log.error(
-      `Failed for: ${failed.map((r) => `${r.editor} (${r.error})`).join(', ')}`
+      `Failed for: ${failed.map((r) => `${r.editor} (${r.error})`).join(', ')}`,
     );
   }
 
-  p.outro('Restart your editor(s) to connect to IonHour.');
+  p.outro('Restart your editor(s) to connect to Ionhour.');
 }

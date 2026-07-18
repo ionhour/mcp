@@ -51,7 +51,7 @@ function getDefaults(): LoginOptions {
 async function initiateDeviceFlow(
   authUrl: string,
   realm: string,
-  clientId: string
+  clientId: string,
 ): Promise<DeviceAuthResponse> {
   const url = `${authUrl}/realms/${realm}/protocol/openid-connect/auth/device`;
   const body = new URLSearchParams({ client_id: clientId, scope: 'openid' });
@@ -76,7 +76,7 @@ async function pollForToken(
   clientId: string,
   deviceCode: string,
   interval: number,
-  expiresIn: number
+  expiresIn: number,
 ): Promise<TokenResponse> {
   const url = `${authUrl}/realms/${realm}/protocol/openid-connect/token`;
   const deadline = Date.now() + expiresIn * 1000;
@@ -114,7 +114,7 @@ async function pollForToken(
     }
 
     throw new Error(
-      `Token exchange failed: ${err.error} — ${err.error_description || ''}`
+      `Token exchange failed: ${err.error} — ${err.error_description || ''}`,
     );
   }
 
@@ -123,7 +123,7 @@ async function pollForToken(
 
 async function fetchWorkspaces(
   baseUrl: string,
-  accessToken: string
+  accessToken: string,
 ): Promise<Workspace[]> {
   const res = await fetch(`${baseUrl}/api/workspaces/mine`, {
     headers: { Authorization: `Bearer ${accessToken}` },
@@ -141,22 +141,19 @@ async function createApiKey(
   baseUrl: string,
   accessToken: string,
   workspaceId: number,
-  keyName: string
+  keyName: string,
 ): Promise<{ key: string }> {
-  const res = await fetch(
-    `${baseUrl}/api/workspaces/${workspaceId}/api-keys`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: keyName,
-        permissionLevel: 'read_write',
-      }),
-    }
-  );
+  const res = await fetch(`${baseUrl}/api/workspaces/${workspaceId}/api-keys`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name: keyName,
+      permissionLevel: 'read_write',
+    }),
+  });
 
   if (!res.ok) {
     const text = await res.text();
@@ -179,20 +176,24 @@ function promptUser(question: string): Promise<string> {
 export async function loginCommand(): Promise<void> {
   const opts = getDefaults();
 
-  process.stderr.write('\nIonHour CLI Login\n');
+  process.stderr.write('\nIonhour CLI Login\n');
   process.stderr.write('=================\n\n');
 
   // Step 1: Initiate device flow
   process.stderr.write('Requesting device code...\n');
   let deviceAuth: DeviceAuthResponse;
   try {
-    deviceAuth = await initiateDeviceFlow(opts.authUrl, opts.realm, opts.clientId);
+    deviceAuth = await initiateDeviceFlow(
+      opts.authUrl,
+      opts.realm,
+      opts.clientId,
+    );
   } catch (err) {
     process.stderr.write(
-      `\nFailed to connect to auth server at ${opts.authUrl}\n`
+      `\nFailed to connect to auth server at ${opts.authUrl}\n`,
     );
     process.stderr.write(
-      'Set IONHOUR_AUTH_URL if your auth server is at a different address.\n\n'
+      'Set IONHOUR_AUTH_URL if your auth server is at a different address.\n\n',
     );
     throw err;
   }
@@ -200,7 +201,9 @@ export async function loginCommand(): Promise<void> {
   // Step 2: Display code and URL
   process.stderr.write('\nOpen this URL in your browser:\n');
   process.stderr.write(`  ${deviceAuth.verification_uri_complete}\n\n`);
-  process.stderr.write(`Or go to ${deviceAuth.verification_uri} and enter code:\n`);
+  process.stderr.write(
+    `Or go to ${deviceAuth.verification_uri} and enter code:\n`,
+  );
   process.stderr.write(`  ${deviceAuth.user_code}\n\n`);
   process.stderr.write('Waiting for approval...\n');
 
@@ -211,7 +214,7 @@ export async function loginCommand(): Promise<void> {
     opts.clientId,
     deviceAuth.device_code,
     deviceAuth.interval || 5,
-    deviceAuth.expires_in
+    deviceAuth.expires_in,
   );
 
   process.stderr.write('Authenticated successfully!\n\n');
@@ -221,7 +224,7 @@ export async function loginCommand(): Promise<void> {
 
   if (workspaces.length === 0) {
     throw new Error(
-      'No workspaces found. Create a workspace at https://app.ionhour.com first.'
+      'No workspaces found. Create a workspace at https://app.ionhour.com first.',
     );
   }
 
@@ -229,9 +232,7 @@ export async function loginCommand(): Promise<void> {
 
   if (workspaces.length === 1) {
     selectedWorkspace = workspaces[0];
-    process.stderr.write(
-      `Using workspace: ${selectedWorkspace.name}\n\n`
-    );
+    process.stderr.write(`Using workspace: ${selectedWorkspace.name}\n\n`);
   } else {
     process.stderr.write('Select a workspace:\n');
     for (let i = 0; i < workspaces.length; i++) {
@@ -260,7 +261,7 @@ export async function loginCommand(): Promise<void> {
     opts.apiUrl,
     token.access_token,
     selectedWorkspace.id,
-    keyName
+    keyName,
   );
 
   // Step 6: Save credentials
@@ -276,6 +277,6 @@ export async function loginCommand(): Promise<void> {
   process.stderr.write(`  Workspace: ${selectedWorkspace.name}\n`);
   process.stderr.write(`  API key stored securely.\n\n`);
   process.stderr.write(
-    'You can now run the MCP server without setting IONHOUR_API_KEY.\n'
+    'You can now run the MCP server without setting IONHOUR_API_KEY.\n',
   );
 }

@@ -1,6 +1,6 @@
 # @ionhour/mcp-server
 
-Connect AI assistants to your [IonHour](https://ionhour.com) uptime monitoring workspace using the [Model Context Protocol](https://modelcontextprotocol.io).
+Connect AI assistants to your [Ionhour](https://ionhour.com) uptime monitoring workspace using the [Model Context Protocol](https://modelcontextprotocol.io).
 
 ## Quick Start
 
@@ -105,13 +105,14 @@ Add to your `~/.codeium/windsurf/mcp_config.json`:
 
 ## Getting an API Key
 
-1. Go to your IonHour workspace **Settings > API Keys**
+1. Go to your Ionhour workspace **Settings > API Keys**
 2. Create a new key with **Read & Write** or **Read Only** permission
 3. Copy the key (starts with `ionh_`)
 
 ## Available Tools (49)
 
 ### Workspace
+
 - `get_workspace` - Get workspace details
 - `whoami` - Get API key info (workspace, user, permission level)
 - `get_workspace_summary` - Overview of projects, checks by status, and active incidents
@@ -120,11 +121,12 @@ Add to your `~/.codeium/windsurf/mcp_config.json`:
 - `send_invitation` - Invite users to the workspace
 
 ### Projects
+
 - `list_projects` / `create_project` / `update_project`
 
 ### Checks (Outbound HTTP Probes)
 
-IonHour probes a URL you own on a schedule and alerts on failure.
+Ionhour probes a URL you own on a schedule and alerts on failure.
 
 - `create_check` - Create an outbound check (accepts human-readable intervals like "every 5 minutes" or "hourly")
 - `list_checks` / `list_checks_by_status` / `find_check_by_name`
@@ -138,7 +140,7 @@ IonHour probes a URL you own on a schedule and alerts on failure.
 
 ### Jobs (Inbound Heartbeat Monitors)
 
-Your cron/worker pings IonHour; IonHour alerts if a ping is late or missing.
+Your cron/worker pings Ionhour; Ionhour alerts if a ping is late or missing.
 
 - `register_job` - Create a Job and get its heartbeat token (accepts human-readable intervals)
 - `list_jobs` / `find_job_by_name`
@@ -148,35 +150,42 @@ Your cron/worker pings IonHour; IonHour alerts if a ping is late or missing.
 - `delete_job` - Delete a job and its data
 
 ### Signals (Heartbeat Pings)
+
 - `send_heartbeat` - Send a success signal
 - `send_failure_signal` - Report a failure
 - `list_signals` - View signal history
 
 ### Incidents
+
 - `list_incidents` / `search_incidents` / `get_incident`
 - `get_incident_timeline` - Incident history for a check or job
 - `create_incident` / `acknowledge_incident` / `resolve_incident`
 - `add_incident_note`
 
 ### Deployments
+
 - `create_deployment` - Start a deployment window (auto-pauses checks)
 - `end_deployment` - End deployment and resume checks
 - `list_deployments`
 
 ### Dependencies
+
 - `list_dependencies` / `get_dependency` / `create_dependency`
 - `update_dependency_status`
 - `delete_dependency` - Delete a dependency
 
 ### Status Pages
+
 - `list_status_pages` / `create_status_page` / `update_status_page`
 - `create_announcement` - Post a status update
 
 ### Alert Channels
+
 - `list_alert_channels` / `create_alert_channel` / `update_alert_channel`
 - `delete_alert_channel` - Delete a notification channel
 
 ### Escalation Rules
+
 - `list_escalation_rules` / `create_escalation_rule` / `update_escalation_rule`
 - `delete_escalation_rule` - Delete an escalation rule
 
@@ -184,27 +193,27 @@ Your cron/worker pings IonHour; IonHour alerts if a ping is late or missing.
 
 The server exposes reference data that AI assistants can browse without calling tools:
 
-| URI | Description |
-|-----|-------------|
-| `ionhour://enums` | All IonHour enums (check statuses, incident states, severities, etc.) |
-| `ionhour://checks/schema` | Check creation schema with field constraints and status lifecycle |
-| `ionhour://help/ping-formats` | Heartbeat integration examples (curl, Node, Python, cron, CI/CD) |
-| `ionhour://tools/catalog` | Catalog of all tools organized by domain with descriptions |
-| `ionhour://guides/workflows` | Common workflow patterns and best practices |
+| URI                           | Description                                                           |
+|-------------------------------|-----------------------------------------------------------------------|
+| `ionhour://enums`             | All Ionhour enums (check statuses, incident states, severities, etc.) |
+| `ionhour://checks/schema`     | Check creation schema with field constraints and status lifecycle     |
+| `ionhour://help/ping-formats` | Heartbeat integration examples (curl, Node, Python, cron, CI/CD)      |
+| `ionhour://tools/catalog`     | Catalog of all tools organized by domain with descriptions            |
+| `ionhour://guides/workflows`  | Common workflow patterns and best practices                           |
 
 ## Prompts
 
 Pre-built workflow templates that guide AI assistants through multi-step operations:
 
-| Prompt | Args | Description |
-|--------|------|-------------|
-| `diagnose_incident` | `incidentId` | Step-by-step incident investigation |
-| `setup_monitoring` | `serviceName` | Guided new-service monitoring setup |
-| `deployment_checklist` | `projectId` | Pre/during/post-deploy workflow |
-| `weekly_reliability_report` | `daysBack?` | Generate a reliability summary |
-| `triage_all_incidents` | — | List and triage all active incidents |
-| `status_page_incident` | `incidentId` | Communicate an incident through status pages |
-| `dependency_health_audit` | — | Audit all dependencies and assess health impact |
+| Prompt                      | Args          | Description                                     |
+|-----------------------------|---------------|-------------------------------------------------|
+| `diagnose_incident`         | `incidentId`  | Step-by-step incident investigation             |
+| `setup_monitoring`          | `serviceName` | Guided new-service monitoring setup             |
+| `deployment_checklist`      | `projectId`   | Pre/during/post-deploy workflow                 |
+| `weekly_reliability_report` | `daysBack?`   | Generate a reliability summary                  |
+| `triage_all_incidents`      | —             | List and triage all active incidents            |
+| `status_page_incident`      | `incidentId`  | Communicate an incident through status pages    |
+| `dependency_health_audit`   | —             | Audit all dependencies and assess health impact |
 
 ## CLI Commands
 
@@ -219,7 +228,7 @@ Commands:
   whoami        Show current authentication status
 
 Options:
-  --api-key KEY     IonHour API key (or set IONHOUR_API_KEY env var)
+  --api-key KEY     Ionhour API key (or set IONHOUR_API_KEY env var)
   --base-url URL    MCP base URL (default: https://mcp.ionhour.com)
   --version, -v     Show version
   --help, -h        Show help
@@ -233,7 +242,7 @@ Environment Variables:
 
 ### `setup`
 
-Interactive wizard that detects installed editors (Cursor, Claude Desktop, VS Code, Claude Code, Windsurf) and writes the IonHour MCP server configuration into each one. Prompts for login if no credentials are stored:
+Interactive wizard that detects installed editors (Cursor, Claude Desktop, VS Code, Claude Code, Windsurf) and writes the Ionhour MCP server configuration into each one. Prompts for login if no credentials are stored:
 
 ```bash
 npx @ionhour/mcp-server setup
@@ -241,7 +250,7 @@ npx @ionhour/mcp-server setup
 
 ### `login`
 
-Opens your browser to authenticate with IonHour, then automatically creates and stores an API key:
+Opens your browser to authenticate with Ionhour, then automatically creates and stores an API key:
 
 ```bash
 npx @ionhour/mcp-server login
@@ -268,10 +277,10 @@ npx @ionhour/mcp-server whoami
 
 ## How It Works
 
-This package runs a local MCP server over **stdio** that proxies requests to the IonHour API. Your AI assistant communicates with this local server, which forwards tool calls to your IonHour workspace.
+This package runs a local MCP server over **stdio** that proxies requests to the Ionhour API. Your AI assistant communicates with this local server, which forwards tool calls to your Ionhour workspace.
 
 ```
-AI Assistant <--stdio--> @ionhour/mcp-server <--HTTPS--> IonHour API
+AI Assistant <--stdio--> @ionhour/mcp-server <--HTTPS--> Ionhour API
 ```
 
 ## Documentation
@@ -282,7 +291,7 @@ AI Assistant <--stdio--> @ionhour/mcp-server <--HTTPS--> IonHour API
 ## Requirements
 
 - Node.js >= 18
-- An IonHour account with an API key
+- An Ionhour account with an API key
 
 ## License
 

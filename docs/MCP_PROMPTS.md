@@ -2,9 +2,9 @@
 
 ## Overview
 
-IonHour's MCP server includes **7 built-in prompts** — pre-built workflow templates that guide AI assistants through multi-step monitoring operations. Prompts provide structured instructions so the assistant follows best practices without you having to spell out every step.
+Ionhour's MCP server includes **7 built-in prompts** — pre-built workflow templates that guide AI assistants through multi-step monitoring operations. Prompts provide structured instructions so the assistant follows best practices without you having to spell out every step.
 
-You can also configure **project rules** in your AI tool to customize how the assistant interacts with IonHour.
+You can also configure **project rules** in your AI tool to customize how the assistant interacts with Ionhour.
 
 ## Built-in Prompts
 
@@ -13,9 +13,11 @@ You can also configure **project rules** in your AI tool to customize how the as
 **Purpose:** Step-by-step incident investigation workflow.
 
 **Arguments:**
+
 - `incidentId` (required): The incident ID to diagnose
 
 **What it does:**
+
 1. Fetches incident details with `get_incident`
 2. Gets current check status and recent signals with `get_check_status`
 3. Retrieves signal history with `list_signals`
@@ -24,6 +26,7 @@ You can also configure **project rules** in your AI tool to customize how the as
 6. Produces a summary: what happened, when, likely root cause, and recommended action
 
 **Example usage:**
+
 ```
 Use the diagnose_incident prompt for incident 42
 ```
@@ -35,9 +38,11 @@ Use the diagnose_incident prompt for incident 42
 **Purpose:** Guided workflow to set up monitoring for a new service from scratch.
 
 **Arguments:**
+
 - `serviceName` (required): Name of the service to monitor
 
 **What it does:**
+
 1. Asks which monitor type is needed: an inbound heartbeat (Job) or an outbound HTTP probe (Check)
 2. Lists existing projects to avoid duplicates
 3. Creates a new project if needed
@@ -47,6 +52,7 @@ Use the diagnose_incident prompt for incident 42
 7. Provides a summary with Job ping URLs / Check IDs and integration instructions
 
 **Example usage:**
+
 ```
 Use the setup_monitoring prompt for "payment-api"
 ```
@@ -58,25 +64,30 @@ Use the setup_monitoring prompt for "payment-api"
 **Purpose:** Pre-deployment verification and deployment window management.
 
 **Arguments:**
+
 - `projectId` (required): The project ID being deployed
 
 **What it does:**
 
 *Pre-deploy:*
+
 1. Lists all checks for the project
 2. Checks for active incidents
 3. Reports current status
 
 *Deploy:*
+
 4. Creates a deployment window (auto-pauses checks)
 5. Confirms checks are paused
 
 *Post-deploy:*
+
 6. Waits for user confirmation
 7. Ends the deployment window (resumes checks)
 8. Verifies all checks are healthy
 
 **Example usage:**
+
 ```
 Use the deployment_checklist prompt for project 5
 ```
@@ -88,20 +99,23 @@ Use the deployment_checklist prompt for project 5
 **Purpose:** Generate a reliability summary across all checks.
 
 **Arguments:**
+
 - `daysBack` (optional, default: 7): Number of days to cover
 
 **What it does:**
+
 1. Gets workspace summary for current status
 2. Lists all checks
 3. Calculates uptime for each check (top 10)
 4. Reviews incidents from the period
 5. Compiles a report with:
-   - Overall workspace uptime percentage
-   - Best and worst performing checks
-   - Incident summary (count, types, MTTR)
-   - Recommendations for improving reliability
+  - Overall workspace uptime percentage
+  - Best and worst performing checks
+  - Incident summary (count, types, MTTR)
+  - Recommendations for improving reliability
 
 **Example usage:**
+
 ```
 Use the weekly_reliability_report prompt with 30 days
 ```
@@ -115,17 +129,19 @@ Use the weekly_reliability_report prompt with 30 days
 **Arguments:** None
 
 **What it does:**
+
 1. Lists all active incidents
 2. Fetches full details for each one
 3. Assesses severity and impact
 4. Presents a prioritized list
 5. For each incident, asks if you want to:
-   - Acknowledge it
-   - Resolve it
-   - Investigate further (delegates to `diagnose_incident`)
+  - Acknowledge it
+  - Resolve it
+  - Investigate further (delegates to `diagnose_incident`)
 6. Provides a summary of all actions taken
 
 **Example usage:**
+
 ```
 Use the triage_all_incidents prompt
 ```
@@ -137,19 +153,22 @@ Use the triage_all_incidents prompt
 **Purpose:** Guided workflow to communicate an incident through status pages.
 
 **Arguments:**
+
 - `incidentId` (required): The incident ID to communicate about
 
 **What it does:**
+
 1. Fetches incident details to understand what happened
 2. Lists status pages to find the right one
 3. Drafts an announcement based on severity:
-   - CRITICAL incidents → impact=CRITICAL, status=INVESTIGATING
-   - WARNING incidents → impact=MINOR, status=INVESTIGATING
+  - CRITICAL incidents → impact=CRITICAL, status=INVESTIGATING
+  - WARNING incidents → impact=MINOR, status=INVESTIGATING
 4. Creates the announcement on the status page
 5. Asks if you want to post follow-up updates as the situation evolves
 6. When resolved, creates a follow-up with status=RESOLVED
 
 **Example usage:**
+
 ```
 Use the status_page_incident prompt for incident 15
 ```
@@ -163,38 +182,40 @@ Use the status_page_incident prompt for incident 15
 **Arguments:** None
 
 **What it does:**
+
 1. Lists all registered dependencies
 2. For each dependency with status DOWN or unknown:
-   - Gets linked checks
-   - Checks each linked check's current status
+  - Gets linked checks
+  - Checks each linked check's current status
 3. Reviews active incidents for correlation
 4. Produces a health report:
-   - Dependencies grouped by status (OK / DOWN / unknown)
-   - Checks impacted by unhealthy dependencies
-   - Recommendations for dependencies that need attention
+  - Dependencies grouped by status (OK / DOWN / unknown)
+  - Checks impacted by unhealthy dependencies
+  - Recommendations for dependencies that need attention
 5. Asks if you want to update any dependency statuses
 
 **Example usage:**
+
 ```
 Use the dependency_health_audit prompt
 ```
 
 ## Project Rules
 
-Most AI tools support project-specific rules files that customize behavior. Add IonHour-specific guidance to ensure consistent, safe interactions.
+Most AI tools support project-specific rules files that customize behavior. Add Ionhour-specific guidance to ensure consistent, safe interactions.
 
 ### Rules File Locations
 
-| AI Tool | File |
-|---------|------|
+| AI Tool     | File                              |
+|-------------|-----------------------------------|
 | Claude Code | `CLAUDE.md` or `.claude/rules.md` |
-| Cursor | `.cursorrules` |
-| Windsurf | `.windsurfrules` |
+| Cursor      | `.cursorrules`                    |
+| Windsurf    | `.windsurfrules`                  |
 
 ### Example Rules
 
 ```markdown
-# IonHour Monitoring Rules
+# Ionhour Monitoring Rules
 
 ## Before Making Changes
 - Always call `get_workspace_summary` first to understand current state
@@ -296,6 +317,7 @@ When creating checks, use natural language:
 ### 5. Confirm Before Destructing
 
 AI assistants should always confirm before:
+
 - Deleting checks, alert channels, escalation rules, or dependencies
 - Resolving incidents (the user may not realize this closes the incident)
 - Modifying production escalation rules
@@ -303,6 +325,7 @@ AI assistants should always confirm before:
 ### 6. Post-Action Verification
 
 After write operations, verify the result:
+
 - After `register_job` → provide the ping URL and suggest a test heartbeat
 - After `create_check` → run `run_check_probe` to confirm the probe works
 - After `create_deployment` → confirm monitors are paused

@@ -6,12 +6,12 @@ export function whoamiCommand(): void {
   if (!creds) {
     process.stderr.write('Not logged in.\n');
     process.stderr.write(
-      'Run `npx @ionhour/mcp-server login` to authenticate.\n'
+      'Run `npx @ionhour/mcp-server login` to authenticate.\n',
     );
     return;
   }
 
-  process.stderr.write('\nIonHour CLI\n');
+  process.stderr.write('\nIonhour CLI\n');
   process.stderr.write('===========\n');
   process.stderr.write(`  Workspace:    ${creds.workspaceName}\n`);
   process.stderr.write(`  Workspace ID: ${creds.workspaceId}\n`);
