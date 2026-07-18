@@ -8,6 +8,26 @@ The server-side MCP API is hosted at `https://mcp.ionhour.com`. This package is 
 
 ### Added
 
+#### Status Page Verification
+- `get_status_page_preview` — the RENDERED state of a status page (overall status, every row's live status + uptimePct, active incidents, announcements, maintenances) plus its real public URL. Status pages are a client-rendered SPA, so agents previously needed a real browser to verify composition; this is the same payload the page renders, as an owner view (disabled/private pages included)
+
+#### Read-Your-Writes & Discovery Tools (3 new tools)
+- `get_check` — Full STORED configuration of a check (schedule, grace, alerting, and for outbound probes every HTTP option, assertion, threshold, and region). Complements `get_check_status` (live state); `create_check`/`update_check` now also echo this full projection instead of dropping ~13 accepted fields
+- `list_regions` — The probe-region menu (id, display name, flag) plus defaults; previously the only discovery path was a validation error
+- `get_alert_routing` — How alerts actually route: policies → rules (match on STATUS + optional project/check scope; severity is NOT a match dimension) → actions, the all-enabled-channels fallback, and the channel inventory
+
+#### Workspace Limits Introspection
+- `get_workspace` now returns the plan's resource limits (`maxMonitors` = shared checks+jobs pool, per-page/per-check caps named accordingly) and current usage (projects, monitors, team members), so agents know the cliff before hitting it mid-build
+
+#### Manual Dependency Status Pinning
+- `update_dependency_status` now PINS the status (`statusSource=MANUAL`): automatic monitor rollup no longer silently overwrites a manually-set status on the next check event. Pass `status: "AUTO"` to release the pin and recompute from monitors immediately
+
+#### Slow-Cron Job Support
+- `register_job`/`update_job` intervals now go up to **7 days** (was 1 hour) and grace periods up to **24 hours** (was 60s), platform-wide — hourly+, 12-hour, daily, and weekly crons with variable runtimes are now modelable. The human-interval grammar understands `"daily"`, `"weekly"`, `"every N days"`, and `"every N weeks"`. Outbound checks keep their 10–3600s probe cadence; `"daily"` on a check answers with an actionable out-of-range error
+
+#### Fixed
+- `create_status_page` now returns a public URL that actually resolves. Status-page URLs are env-shaped (production: `https://{slug}.ionhour.cc` subdomain; sit/uat: `https://status-{env}.ionhour.cc/{slug}`), matching what the dashboard shows — the old flat-base form pointed at hosts that don't serve status pages. The same fix applies to notifier links, subscriber confirm/unsubscribe links, RSS/Atom self-links, and the embeddable widget
+
 #### Delete Tools (4 new tools)
 - `delete_check` — Soft-delete a monitoring check (cleans up signals and incidents)
 - `delete_alert_channel` — Delete a notification channel
@@ -38,6 +58,12 @@ The server-side MCP API is hosted at `https://mcp.ionhour.com`. This package is 
 ### Changed
 
 - **Guide & prompt refresh** — the workflow guides and the `setup_monitoring`, `diagnose_incident`, `deployment_checklist`, and `weekly_reliability_report` prompts now distinguish inbound heartbeat monitors (Jobs) from outbound HTTP probes (Checks), branching on monitor type and iterating both check and job tools where relevant.
+- **`register_job` returns an absolute ping URL** — `pingUrl` now includes the signal host (previously a relative `/api/signals/ping/<token>` path), matching `get_job_integration_guide`.
+- **Job interval floor aligned with the dashboard** — `register_job`/`update_job` accept intervals from 10s (previously 300s), matching the platform-wide 10–3600s range.
+- **Dependency-anchored checks readable everywhere** — `get_check_status`, `pause_check`, `resume_check`, `get_check_integration_guide`, and `delete_check` now resolve checks anchored to a dependency (previously only `run_check_probe` and the write tools did, so a dependency health check could be probed but not read).
+- **`list_status_pages` component preview is now honest** — every previewed row carries `name`, `linkType` (check/job/project/dependency), and `linkedName` (previously job- and dependency-linked rows were bare ids), and `componentsTruncated: true` marks a preview cut at 10 rows so `componentCount` can no longer silently disagree with the array length.
+- **`get_dependency` counts disambiguated** — the misleading `checksCount` (which counted project checks *depending on* the dependency, not the attached monitors listed next to it) is replaced by `attachedChecksCount` (matches `dependencyChecks`) and `dependentChecksCount` (matches `serviceChecks`); `list_dependencies` renames its count to `dependentChecksCount` accordingly.
+- **Status-page component docs** — `add_status_page_component` now documents that `checkId` must be project-anchored (dependency health monitors link via `dependencyId`) and that dependency-linked rows show current status only (no uptime history bar).
 
 ### Deprecated
 
